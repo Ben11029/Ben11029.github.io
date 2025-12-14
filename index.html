@@ -14,7 +14,7 @@ layout: default
       {% for match in image_matches offset: 1 %}
         {% assign url_part = match | split: '](' %}
         {% if url_part.size > 1 %}
-          {% assign image_url = url_part[1] | split: ')' | first | strip %}
+          {% assign image_url = url_part[1] | split: ')' | first | split: '"' | first | strip %}
           {% if image_url != '' and image_url != nil %}
             {% comment %} 处理路径中的反斜杠 {% endcomment %}
             {% assign image_url = image_url | replace: '\', '/' %}
@@ -27,12 +27,13 @@ layout: default
             {% comment %} 处理相对路径 {% endcomment %}
             {% unless image_url contains 'http://' or image_url contains 'https://' %}
               {% comment %} 如果路径以 / 开头，直接添加 baseurl {% endcomment %}
-              {% if image_url contains '/' %}
-                {% if image_url contains '/images/' or image_url contains '/uploads/' %}
-                  {% assign image_url = site.baseurl | append: image_url %}
-                {% else %}
-                  {% assign image_url = site.baseurl | append: '/' | append: image_url %}
-                {% endif %}
+              {% assign first_char = image_url | slice: 0 %}
+              {% if first_char == '/' %}
+                {% assign image_url = site.baseurl | append: image_url %}
+              {% elsif image_url contains '/images/' or image_url contains '/uploads/' %}
+                {% assign image_url = site.baseurl | append: '/' | append: image_url %}
+              {% elsif image_url contains '/' %}
+                {% assign image_url = site.baseurl | append: '/' | append: image_url %}
               {% else %}
                 {% assign image_url = site.baseurl | append: '/images/' | append: image_url %}
               {% endif %}

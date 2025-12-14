@@ -236,8 +236,15 @@ img {
     height: 100%;
     object-fit: contain;
     background: transparent;
-    padding: 0;
+    padding: 5px;
     display: block;
+  }
+  
+  // SVG logo 特殊处理
+  img[src$=".svg"] {
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: $radius-md;
   }
 }
 
