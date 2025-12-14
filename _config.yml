@@ -27,11 +27,11 @@ footer-links:
   email:
   facebook:
   flickr:
-  github: 
+  github: Ben11029
   instagram:
   linkedin:
   pinterest:
-  rss: # just type anything here for a working RSS icon
+  rss: true # just type anything here for a working RSS icon
   twitter: 
   stackoverflow: # your stackoverflow profile, e.g. "users/50476/bart-kiers"
   youtube: # channel/<your_long_string> or user/<user-name>
@@ -52,7 +52,7 @@ google_analytics:
 # 你的网站 URL（例如：http://barryclark.github.io 或 http://www.barryclark.co）
 # Used for Sitemap.xml and your RSS feed
 # 用于生成 Sitemap.xml 和 RSS 订阅源
-url:
+url: https://ben11029.github.io
 
 # If you're hosting your site at a Project repository on GitHub pages
 # 如果你的网站托管在 GitHub Pages 的项目仓库中
@@ -111,3 +111,12 @@ exclude:
   - LICENSE
   - README.md
   - CNAME
+  - .git
+  - .gitignore
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+
+# Timezone
+timezone: Asia/Shanghai

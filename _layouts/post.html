@@ -3,15 +3,49 @@ layout: default
 ---
 
 <article class="post">
-  <h1>{{ page.title }}</h1>
+  <header class="post-header">
+    <h1>{{ page.title }}</h1>
+    
+    <div class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date" itemprop="datePublished">
+        {{ page.date | date: "%Y年%m月%d日" }}
+      </time>
+      {% if page.tags.size > 0 %}
+      <div class="post-tags">
+        {% for tag in page.tags %}
+          <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">#{{ tag }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% assign words = content | number_of_words %}
+      {% if words < 360 %}
+        <span class="reading-time">预计阅读时间：1 分钟</span>
+      {% else %}
+        <span class="reading-time">预计阅读时间：{{ words | divided_by: 180 }} 分钟</span>
+      {% endif %}
+    </div>
+  </header>
 
   <div class="entry">
     {{ content }}
   </div>
 
-  <div class="date">
-    Written on {{ page.date | date: "%B %e, %Y" }}
-  </div>
+  <footer class="post-footer">
+    <div class="post-navigation">
+      {% if page.previous %}
+      <div class="post-nav-prev">
+        <span>上一篇：</span>
+        <a href="{{ site.baseurl }}{{ page.previous.url }}">{{ page.previous.title }}</a>
+      </div>
+      {% endif %}
+      {% if page.next %}
+      <div class="post-nav-next">
+        <span>下一篇：</span>
+        <a href="{{ site.baseurl }}{{ page.next.url }}">{{ page.next.title }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </footer>
 
   {% include disqus.html %}
 </article>

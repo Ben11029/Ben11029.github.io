@@ -66,6 +66,7 @@ h4 {
 
 p {
   margin: 15px 0;
+  line-height: 1.8;
 }
 
 a {
@@ -108,6 +109,18 @@ strong, b {
 
 img {
   max-width: 100%;
+  height: auto;
+  display: block;
+  
+  // Lazy loading support
+  &[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s;
+    
+    &.loaded {
+      opacity: 1;
+    }
+  }
 }
 
 // Fixes images in popup boxes from Google Translate
@@ -254,20 +267,132 @@ nav {
 .post {
   blockquote {
     margin: 1.8em .8em;
-    border-left: 2px solid $gray;
-    padding: 0.1em 1em;
-    color: $gray;
-    font-size: 22px;
+    border-left: 3px solid $blue;
+    padding: 0.5em 1em;
+    background-color: rgba(65, 131, 196, 0.05);
+    color: $darkGray;
+    font-size: 18px;
     font-style: italic;
+    border-radius: 0 4px 4px 0;
+
+    @include mobile {
+      margin: 1.5em 0;
+      font-size: 16px;
+    }
   }
 
   .comments {
-    margin-top: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid $lightGray;
   }
 
   .read-more {
-    text-transform: uppercase;
-    font-size: 15px;
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: $blue;
+    color: $white;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+
+    &:hover {
+      background-color: darken($blue, 10%);
+      transform: translateY(-1px);
+      color: $white;
+    }
+  }
+}
+
+.post-meta {
+  margin: 10px 0 20px;
+  font-size: 14px;
+  color: $gray;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .post-date {
+    color: $gray;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background-color: $lightGray;
+      border-radius: 3px;
+      color: $darkGray;
+      font-size: 12px;
+      text-decoration: none;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: $gray;
+        color: $white;
+      }
+    }
+  }
+
+  .reading-time {
+    color: $gray;
+    font-size: 13px;
+  }
+}
+
+.post-header {
+  margin-bottom: 30px;
+}
+
+.post-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid $lightGray;
+}
+
+.post-navigation {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  @include mobile {
+    flex-direction: column;
+  }
+
+  .post-nav-prev,
+  .post-nav-next {
+    flex: 1;
+    min-width: 200px;
+
+    span {
+      color: $gray;
+      font-size: 14px;
+    }
+
+    a {
+      display: block;
+      margin-top: 5px;
+      color: $blue;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 
@@ -281,6 +406,130 @@ nav {
 footer {
   padding: 20px 0;
   text-align: center;
+}
+
+// Back to top button
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: $blue;
+  color: $white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 1000;
+
+  &:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+  }
+
+  &.show {
+    display: flex;
+  }
+
+  @include mobile {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+// Tags and Archive pages
+.tags-page,
+.archive-page {
+  .tag-group,
+  .archive-year {
+    margin-bottom: 40px;
+  }
+
+  .tag-name,
+  .archive-year h2 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid $lightGray;
+
+    a {
+      color: $darkGray;
+      text-decoration: none;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+  }
+
+  .tag-count,
+  .month-count {
+    color: $gray;
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+
+  .tag-posts,
+  .archive-posts {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px dotted $lightGray;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      @include mobile {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      a {
+        color: $darkGray;
+        font-weight: 500;
+
+        &:hover {
+          color: $blue;
+        }
+      }
+
+      .post-date {
+        color: $gray;
+        font-size: 14px;
+        white-space: nowrap;
+
+        @include mobile {
+          margin-top: 5px;
+        }
+      }
+    }
+  }
+
+  .archive-month {
+    margin-left: 20px;
+    margin-bottom: 25px;
+
+    @include mobile {
+      margin-left: 10px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: $gray;
+    }
+  }
 }
 
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
