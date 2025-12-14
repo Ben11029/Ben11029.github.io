@@ -52,12 +52,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 700;
   margin-top: 0;
+  margin-bottom: 0.5em;
   
   @include mobile {
-    font-size: 28px;
+    font-size: 24px;
+    margin-bottom: 0.4em;
   }
   
   a {
@@ -425,6 +427,12 @@ nav {
 .post-content {
   flex: 1;
   min-width: 0;
+
+  // 减小标题和预览文字之间的间距
+  .entry {
+    margin-top: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
 }
 
 .post-image-preview {
@@ -533,7 +541,7 @@ nav {
 }
 
 .post-meta {
-  margin: $spacing-md 0;
+  margin: $spacing-sm 0;
   font-size: 14px;
   color: $gray;
   display: flex;
