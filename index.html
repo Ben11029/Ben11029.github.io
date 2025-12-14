@@ -6,76 +6,45 @@ layout: default
   {% for post in site.posts %}
     {% comment %} 提取文章中的第一张图片 {% endcomment %}
     {% assign first_image = nil %}
+    {% assign content_text = post.content %}
     
-    {% comment %} 方法1: 从 Markdown 格式提取 ![alt](url) {% endcomment %}
-    {% assign content_parts = post.content | split: '![' %}
-    {% if content_parts.size > 1 %}
-      {% for part in content_parts %}
-        {% if forloop.index > 1 %}
-          {% assign url_part = part | split: '](' %}
-          {% if url_part.size > 1 %}
-            {% assign image_url = url_part[1] | split: ')' | first | split: '"' | first | split: "'" | first | strip %}
-            {% comment %} 处理包含 {{ site.baseurl }} 的情况 {% endcomment %}
+    {% comment %} 尝试匹配 Markdown 图片格式: ![alt](url) {% endcomment %}
+    {% assign image_matches = content_text | split: '![' %}
+    {% if image_matches.size > 1 %}
+      {% for match in image_matches offset: 1 %}
+        {% assign url_part = match | split: '](' %}
+        {% if url_part.size > 1 %}
+          {% assign image_url = url_part[1] | split: ')' | first | strip %}
+          {% if image_url != '' and image_url != nil %}
+            {% comment %} 处理路径中的反斜杠 {% endcomment %}
+            {% assign image_url = image_url | replace: '\', '/' %}
+            {% comment %} 处理 site.baseurl 变量（Liquid 变量在内容中会以字符串形式存在）{% endcomment %}
             {% if image_url contains '{{ site.baseurl }}' %}
               {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
+            {% elsif image_url contains 'site.baseurl' %}
+              {% assign image_url = image_url | replace: 'site.baseurl', site.baseurl %}
             {% endif %}
-            {% comment %} 处理反斜杠，转换为正斜杠 {% endcomment %}
-            {% assign image_url = image_url | replace: '\', '/' %}
-            {% if image_url != '' and first_image == nil %}
-              {% assign first_image = image_url %}
-              {% break %}
-            {% endif %}
+            {% comment %} 处理相对路径 {% endcomment %}
+            {% unless image_url contains 'http://' or image_url contains 'https://' %}
+              {% comment %} 如果路径以 / 开头，直接添加 baseurl {% endcomment %}
+              {% if image_url contains '/' %}
+                {% if image_url contains '/images/' or image_url contains '/uploads/' %}
+                  {% assign image_url = site.baseurl | append: image_url %}
+                {% else %}
+                  {% assign image_url = site.baseurl | append: '/' | append: image_url %}
+                {% endif %}
+              {% else %}
+                {% assign image_url = site.baseurl | append: '/images/' | append: image_url %}
+              {% endif %}
+            {% endunless %}
+            {% assign first_image = image_url %}
+            {% break %}
           {% endif %}
         {% endif %}
       {% endfor %}
     {% endif %}
     
-    {% comment %} 方法2: 从 HTML img 标签提取 src="url" {% endcomment %}
-    {% if first_image == nil %}
-      {% assign html_parts = post.content | split: '<img' %}
-      {% if html_parts.size > 1 %}
-        {% for part in html_parts %}
-          {% if forloop.index > 1 %}
-            {% assign src_parts = part | split: 'src="' %}
-            {% if src_parts.size > 1 %}
-              {% assign image_url = src_parts[1] | split: '"' | first | strip %}
-              {% if image_url contains '{{ site.baseurl }}' %}
-                {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
-              {% endif %}
-              {% assign image_url = image_url | replace: '\', '/' %}
-              {% if image_url != '' and first_image == nil %}
-                {% assign first_image = image_url %}
-                {% break %}
-              {% endif %}
-            {% endif %}
-            {% comment %} 尝试单引号格式 src='url' {% endcomment %}
-            {% assign src_parts = part | split: "src='" %}
-            {% if src_parts.size > 1 %}
-              {% assign image_url = src_parts[1] | split: "'" | first | strip %}
-              {% if image_url contains '{{ site.baseurl }}' %}
-                {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
-              {% endif %}
-              {% assign image_url = image_url | replace: '\', '/' %}
-              {% if image_url != '' and first_image == nil %}
-                {% assign first_image = image_url %}
-                {% break %}
-              {% endif %}
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endif %}
-    
-    {% comment %} 处理相对路径，确保以 / 开头 {% endcomment %}
-    {% if first_image != nil %}
-      {% unless first_image contains 'http://' or first_image contains 'https://' %}
-        {% unless first_image starts_with '/' %}
-          {% assign first_image = '/' | append: first_image %}
-        {% endunless %}
-      {% endunless %}
-    {% endif %}
-
-    <article class="post {% if first_image %}post-with-image{% endif %}">
+    <article class="post">
       <div class="post-content-wrapper">
         <div class="post-content">
           <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
@@ -107,19 +76,13 @@ layout: default
 
           <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">阅读全文</a>
         </div>
-
+        
         {% if first_image %}
-          <div class="post-image-preview">
-            <a href="{{ site.baseurl }}{{ post.url }}">
-              {% if first_image contains 'http://' or first_image contains 'https://' %}
-                <img src="{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
-              {% elsif first_image starts_with '/' %}
-                <img src="{{ site.baseurl }}{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
-              {% else %}
-                <img src="{{ site.baseurl }}/{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
-              {% endif %}
-            </a>
-          </div>
+        <div class="post-image-preview">
+          <a href="{{ site.baseurl }}{{ post.url }}">
+            <img src="{{ first_image }}" alt="{{ post.title }}" loading="lazy" />
+          </a>
+        </div>
         {% endif %}
       </div>
     </article>
