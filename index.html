@@ -4,34 +4,124 @@ layout: default
 
 <div class="posts">
   {% for post in site.posts %}
-    <article class="post">
-
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
-
-      <div class="post-meta">
-        <span class="post-date">
-          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>
-        </span>
-        {% if post.tags.size > 0 %}
-        <span class="post-tags">
-          {% for tag in post.tags %}
-            <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">#{{ tag }}</a>
-          {% endfor %}
-        </span>
+    {% comment %} 提取文章中的第一张图片 {% endcomment %}
+    {% assign first_image = nil %}
+    
+    {% comment %} 方法1: 从 Markdown 格式提取 ![alt](url) {% endcomment %}
+    {% assign content_parts = post.content | split: '![' %}
+    {% if content_parts.size > 1 %}
+      {% for part in content_parts %}
+        {% if forloop.index > 1 %}
+          {% assign url_part = part | split: '](' %}
+          {% if url_part.size > 1 %}
+            {% assign image_url = url_part[1] | split: ')' | first | split: '"' | first | split: "'" | first | strip %}
+            {% comment %} 处理包含 {{ site.baseurl }} 的情况 {% endcomment %}
+            {% if image_url contains '{{ site.baseurl }}' %}
+              {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
+            {% endif %}
+            {% comment %} 处理反斜杠，转换为正斜杠 {% endcomment %}
+            {% assign image_url = image_url | replace: '\', '/' %}
+            {% if image_url != '' and first_image == nil %}
+              {% assign first_image = image_url %}
+              {% break %}
+            {% endif %}
+          {% endif %}
         {% endif %}
-        {% assign words = post.content | number_of_words %}
-        {% if words < 360 %}
-          <span class="reading-time">1 分钟阅读</span>
-        {% else %}
-          <span class="reading-time">{{ words | divided_by: 180 }} 分钟阅读</span>
+      {% endfor %}
+    {% endif %}
+    
+    {% comment %} 方法2: 从 HTML img 标签提取 src="url" {% endcomment %}
+    {% if first_image == nil %}
+      {% assign html_parts = post.content | split: '<img' %}
+      {% if html_parts.size > 1 %}
+        {% for part in html_parts %}
+          {% if forloop.index > 1 %}
+            {% assign src_parts = part | split: 'src="' %}
+            {% if src_parts.size > 1 %}
+              {% assign image_url = src_parts[1] | split: '"' | first | strip %}
+              {% if image_url contains '{{ site.baseurl }}' %}
+                {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
+              {% endif %}
+              {% assign image_url = image_url | replace: '\', '/' %}
+              {% if image_url != '' and first_image == nil %}
+                {% assign first_image = image_url %}
+                {% break %}
+              {% endif %}
+            {% endif %}
+            {% comment %} 尝试单引号格式 src='url' {% endcomment %}
+            {% assign src_parts = part | split: "src='" %}
+            {% if src_parts.size > 1 %}
+              {% assign image_url = src_parts[1] | split: "'" | first | strip %}
+              {% if image_url contains '{{ site.baseurl }}' %}
+                {% assign image_url = image_url | replace: '{{ site.baseurl }}', site.baseurl %}
+              {% endif %}
+              {% assign image_url = image_url | replace: '\', '/' %}
+              {% if image_url != '' and first_image == nil %}
+                {% assign first_image = image_url %}
+                {% break %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+    
+    {% comment %} 处理相对路径，确保以 / 开头 {% endcomment %}
+    {% if first_image != nil %}
+      {% unless first_image contains 'http://' or first_image contains 'https://' %}
+        {% unless first_image starts_with '/' %}
+          {% assign first_image = '/' | append: first_image %}
+        {% endunless %}
+      {% endunless %}
+    {% endif %}
+
+    <article class="post {% if first_image %}post-with-image{% endif %}">
+      <div class="post-content-wrapper">
+        <div class="post-content">
+          <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
+
+          <div class="post-meta">
+            <span class="post-date">
+              <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y年%m月%d日" }}</time>
+            </span>
+            <div class="post-meta-right">
+              {% if post.tags.size > 0 %}
+              <span class="post-tags">
+                {% for tag in post.tags %}
+                  <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">#{{ tag }}</a>
+                {% endfor %}
+              </span>
+              {% endif %}
+              {% assign words = post.content | number_of_words %}
+              {% if words < 360 %}
+                <span class="reading-time">1 分钟阅读</span>
+              {% else %}
+                <span class="reading-time">{{ words | divided_by: 180 }} 分钟阅读</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="entry">
+            {{ post.excerpt }}
+          </div>
+
+          <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">阅读全文</a>
+        </div>
+
+        {% if first_image %}
+          <div class="post-image-preview">
+            <a href="{{ site.baseurl }}{{ post.url }}">
+              {% if first_image contains 'http://' or first_image contains 'https://' %}
+                <img src="{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
+              {% elsif first_image starts_with '/' %}
+                <img src="{{ site.baseurl }}{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
+              {% else %}
+                <img src="{{ site.baseurl }}/{{ first_image }}" alt="{{ post.title }}" loading="lazy" onerror="this.style.display='none';" />
+              {% endif %}
+            </a>
+          </div>
         {% endif %}
       </div>
-
-      <div class="entry">
-        {{ post.excerpt }}
-      </div>
-
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">阅读全文</a>
     </article>
   {% endfor %}
 </div>

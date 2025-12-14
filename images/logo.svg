@@ -1,0 +1,87 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="handGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8C9A0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D4A574;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 黑色背景圆形 -->
+  <circle cx="40" cy="40" r="38" fill="#000000"/>
+  
+  <!-- 手部 - 手印姿势（拇指和食指形成圆圈，其他三指向上） -->
+  <g transform="translate(40, 42)">
+    <!-- 手腕 -->
+    <ellipse cx="0" cy="20" rx="10" ry="14" fill="url(#handGradient)"/>
+    
+    <!-- 手镯装饰 -->
+    <line x1="-8" y1="17" x2="8" y2="17" stroke="#8B6F47" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-8" y1="20" x2="8" y2="20" stroke="#8B6F47" stroke-width="1.5" opacity="0.4"/>
+    
+    <!-- 手掌基础形状 -->
+    <ellipse cx="0" cy="6" rx="9" ry="12" fill="url(#handGradient)"/>
+    
+    <!-- 小指（最右侧，向上延伸） -->
+    <path d="M 4.5 0 Q 5.5 -2 5 -4.5 Q 4.5 -7 4 -9.5 Q 3.5 -12 3 -14.5" 
+          stroke="url(#handGradient)" 
+          stroke-width="4" 
+          fill="none" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <ellipse cx="3" cy="-14.5" rx="2.2" ry="2.8" fill="url(#handGradient)"/>
+    
+    <!-- 无名指（向上延伸） -->
+    <path d="M 2.5 0.5 Q 3.5 -1.5 3 -4 Q 2.5 -6.5 2 -9 Q 1.5 -11.5 1 -14" 
+          stroke="url(#handGradient)" 
+          stroke-width="4" 
+          fill="none" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <ellipse cx="1" cy="-14" rx="2.2" ry="2.8" fill="url(#handGradient)"/>
+    
+    <!-- 中指（最长，中间，向上延伸） -->
+    <path d="M 0 0.5 Q 0 -2 0 -4.5 Q 0 -7 0 -9.5 Q 0 -12 0 -15" 
+          stroke="url(#handGradient)" 
+          stroke-width="4.5" 
+          fill="none" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <ellipse cx="0" cy="-15" rx="2.5" ry="3" fill="url(#handGradient)"/>
+    
+    <!-- 食指（向上延伸，但指尖与拇指形成圆圈） -->
+    <path d="M -2.5 0.5 Q -3.5 -1.5 -3 -4 Q -2.5 -6.5 -2 -9" 
+          stroke="url(#handGradient)" 
+          stroke-width="4" 
+          fill="none" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <!-- 食指指尖部分，与拇指形成圆圈 -->
+    <path d="M -2 -9 Q -2.5 -10 -3 -10.5 Q -3.5 -11 -3.8 -11" 
+          stroke="url(#handGradient)" 
+          stroke-width="3.5" 
+          fill="none" 
+          stroke-linecap="round"/>
+    
+    <!-- 拇指（与食指形成手印圆圈） -->
+    <path d="M -3.5 2 Q -4.5 0 -5.5 -2 Q -6 -3.5 -6.2 -5 Q -6.2 -6.5 -5.8 -7.5" 
+          stroke="url(#handGradient)" 
+          stroke-width="4" 
+          fill="none" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    <ellipse cx="-5.8" cy="-7.5" rx="2.2" ry="2.8" fill="url(#handGradient)"/>
+    
+    <!-- 拇指和食指形成的圆圈（手印的核心部分） -->
+    <circle cx="-3.8" cy="-10.5" r="3.5" 
+            stroke="url(#handGradient)" 
+            stroke-width="3.5" 
+            fill="none" 
+            stroke-linecap="round"
+            opacity="0.9"/>
+    
+    <!-- 圆圈内部连接点 -->
+    <circle cx="-3.8" cy="-10.5" r="1.5" 
+            fill="url(#handGradient)" 
+            opacity="0.6"/>
+  </g>
+</svg>

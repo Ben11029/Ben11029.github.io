@@ -1,0 +1,53 @@
+---
+layout: default
+title: 归档
+permalink: /archive/
+---
+
+<div class="archive-page">
+  <h1>文章归档</h1>
+  
+  {% if site.posts.size > 0 %}
+    {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+    {% for year in posts_by_year %}
+      <div class="archive-year">
+        <h2>{{ year.name }}年</h2>
+        
+        {% assign posts_by_month = year.items | group_by_exp: "post", "post.date | date: '%m'" %}
+        {% for month in posts_by_month %}
+          <div class="archive-month">
+            <h3>
+              {% case month.name %}
+                {% when '01' %}一月
+                {% when '02' %}二月
+                {% when '03' %}三月
+                {% when '04' %}四月
+                {% when '05' %}五月
+                {% when '06' %}六月
+                {% when '07' %}七月
+                {% when '08' %}八月
+                {% when '09' %}九月
+                {% when '10' %}十月
+                {% when '11' %}十一月
+                {% when '12' %}十二月
+              {% endcase %}
+              <span class="month-count">({{ month.items.size }})</span>
+            </h3>
+            
+            <ul class="archive-posts">
+              {% for post in month.items %}
+                <li>
+                  <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+                  <span class="post-date">{{ post.date | date: "%m-%d" }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>暂无文章</p>
+  {% endif %}
+</div>
+

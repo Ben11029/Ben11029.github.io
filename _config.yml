@@ -13,7 +13,7 @@ description: 天心海月，真幻了无！
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 # 头像或个人图片的 URL（可以使用你的 GitHub 头像链接）
-avatar: https://raw.githubusercontent.com/barryclark/jekyll-now/master/images/jekyll-logo.png
+avatar: /images/logo.svg
 
 #
 # Flags below are optional

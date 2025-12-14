@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ben11029.github.io/sitemap.xml
+
